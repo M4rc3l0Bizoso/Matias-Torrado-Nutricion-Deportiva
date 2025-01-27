@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrición Deportiva - Matías Torrado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../public/styles/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Matías Torrado + Nutricion deportiva</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../public/index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../public/sobreNosotros.html">Sobre Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../public/programas.html">Programas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Agendar Consulta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../public/inicioSesion.html">Iniciar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="appointment-form">
+        <h2>Agendar Consulta</h2>
+        <form id="appointmentForm">
+            <div>
+                <label for="client_name">Nombre:</label>
+                <input type="text" id="client_name" name="client_name" required>
+            </div>
+            <div>
+                <label for="client_email">Correo Electrónico:</label>
+                <input type="email" id="client_email" name="client_email" required>
+            </div>
+            <div>
+                <label for="date">Fecha:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div>
+                <label for="time">Hora:</label>
+                <input type="time" id="time" name="time" required>
+            </div>
+            <button type="submit">Agendar</button>
+        </form>
+    </section>
+    
+    
+    <section id="payment-section" class="appointment-form" style="display: none;">
+        <h2>Pago de Consulta</h2>
+        <form id="paymentForm">
+            <div class="form-group">
+                <label for="card-holder">Nombre del Titular</label>
+                <input type="text" id="card-holder" name="cardHolder" required>
+            </div>
+            <div class="form-group">
+                <label for="card-number">Número de Tarjeta</label>
+                <input type="text" id="card-number" name="cardNumber" maxlength="16" required>
+            </div>
+            <div class="form-group">
+                <label for="expiry-date">Fecha de Expiración</label>
+                <input type="text" id="expiry-date" name="expiryDate" placeholder="MM/AA" required>
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" name="cvv" maxlength="3" required>
+            </div>
+            <button type="submit" class="btn">Pagar</button>
+        </form>
+    </section>
+
+    <button id="checkout-btn">Pagar Consulta</button>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script>
+    const mp = new MercadoPago('TU_PUBLIC_KEY'); // Reemplaza con tu Public Key
+
+    document.getElementById('checkout-btn').addEventListener('click', async () => {
+        const response = await fetch('http://localhost:3000/create_preference', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: 'Consulta Nutricional',
+                unit_price: 50, // Precio de la consulta
+                quantity: 1,
+            }),
+        });
+
+        const { id } = await response.json();
+
+        mp.checkout({
+            preference: {
+                id,
+            },
+            autoOpen: true, // Abre automáticamente el checkout
+        });
+    });
+</script>
+
+    <script type="module" src="../public/js/agenda.js"></script>
+    
+</body>
+</html>
